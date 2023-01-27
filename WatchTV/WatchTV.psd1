@@ -1,6 +1,6 @@
 @{
   RootModule = '.\WatchTV.psm1'
-  ModuleVersion = '0.24.1'
+  ModuleVersion = '0.25.0'
   GUID = 'dbaa107f-646d-4ffd-9f6f-54b79131cf7a'
   Author = ''
   CompanyName = ''
