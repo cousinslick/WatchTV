@@ -1,6 +1,6 @@
 @{
   RootModule = '.\WatchTV.psm1'
-  ModuleVersion = '0.23.2'
+  ModuleVersion = '0.24.1'
   GUID = 'dbaa107f-646d-4ffd-9f6f-54b79131cf7a'
   Author = ''
   CompanyName = ''
@@ -10,6 +10,7 @@
       "Get-ABC7StreamUrl"
     , "Get-CBSLAStreamUrl"
     , "Get-Fox5ATLStreamUrl"
+    , "Get-FCNStreamUrl"
     , "Get-KENSStreamUrl"
     , "Get-KFMBStreamUrl"
     , "Get-KFORStreamUrl"
@@ -46,12 +47,14 @@
     , "Get-WTVJStreamUrl"
     , "Get-WVITStreamUrl"
     , "Get-WYFFStreamUrl"
+    , "Get-WZTVStreamUrl"
     , "Get-XEWTStreamUrl"
 
     , "Get-TegnaDVR"
     , "Get-KFMBDVR"
     , "Get-KIIIDVR"
     , "Get-WXIADVR"
+    , "Get-FCNDVR"
 
     , "Get-UA"
     , "Get-CabletownStreamUrl"
@@ -65,7 +68,7 @@
   AliasesToExport = '*'
   PrivateData = @{
     PSData = @{
-      LicenseUri = 'http://unlicense.org'
+      LicenseUri = 'https://opensource.org/licenses/0BSD'
     }
   }
 }
