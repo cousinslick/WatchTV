@@ -1,6 +1,6 @@
 @{
   RootModule = '.\WatchTV.psm1'
-  ModuleVersion = '0.27.0'
+  ModuleVersion = '0.28.0'
   GUID = 'dbaa107f-646d-4ffd-9f6f-54b79131cf7a'
   Author = ''
   CompanyName = ''
@@ -12,6 +12,7 @@
     , "Get-Fox5ATLStreamUrl"
     , "Get-KCBSStreamUrl"
     , "Get-KCNCStreamUrl"
+    , "Get-KCTVStreamUrl"
     , "Get-KDKAStreamUrl"
     , "Get-KENSStreamUrl"
     , "Get-KFMBStreamUrl"
@@ -74,7 +75,7 @@
     , "Get-CabletownStreamUrl"
     , "Get-EyemarkStreamUrl"
     , "Get-GenericStreamUrl"
-    , "Get-GrayStramUrl"
+    , "Get-GrayStreamUrl"
     , "Get-HearstStreamUrl"
     , "Get-NexstarStreamUrl"
   )
