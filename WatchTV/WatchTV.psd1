@@ -1,6 +1,6 @@
 @{
   RootModule = '.\WatchTV.psm1'
-  ModuleVersion = '0.29.0'
+  ModuleVersion = '0.30.0'
   GUID = 'dbaa107f-646d-4ffd-9f6f-54b79131cf7a'
   Author = ''
   CompanyName = ''
@@ -10,6 +10,7 @@
     "Get-ABC7StreamUrl"
     , "Get-FCNStreamUrl"
     , "Get-Fox5ATLStreamUrl"
+    , "Get-KAREStreamUrl"
     , "Get-KCBSStreamUrl"
     , "Get-KCNCStreamUrl"
     , "Get-KCTVStreamUrl"
@@ -67,11 +68,12 @@
     , "Get-XEWTStreamUrl"
 
     , "Get-TegnaDVR"
+    , "Get-FCNDVR"
+    , "Get-KAREDVR"
     , "Get-KFMBDVR"
     , "Get-KIIIDVR"
-    , "Get-WXIADVR"
-    , "Get-FCNDVR"
     , "Get-WHASDVR"
+    , "Get-WXIADVR"
 
     , "Get-UA"
     , "Get-CabletownStreamUrl"
@@ -80,6 +82,7 @@
     , "Get-GrayStreamUrl"
     , "Get-HearstStreamUrl"
     , "Get-NexstarStreamUrl"
+    , "Get-YouTubeLiveIds"
   )
   CmdletsToExport = @()
   VariablesToExport = '*'
