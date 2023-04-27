@@ -1,6 +1,6 @@
 @{
   RootModule = '.\WatchTV.psm1'
-  ModuleVersion = '0.35.0'
+  ModuleVersion = '0.36.0'
   GUID = 'dbaa107f-646d-4ffd-9f6f-54b79131cf7a'
   Author = ''
   CompanyName = ''
@@ -76,6 +76,7 @@
     , "Get-KAREDVR"
     , "Get-KFMBDVR"
     , "Get-KIIIDVR"
+    , "Get-KPNXDVR"
     , "Get-WHASDVR"
     , "Get-WXIADVR"
 

@@ -7,7 +7,7 @@ function Get-TegnaDVR
     [string] $Qty = "10"
   )
 
-  $ua = "$([uri]::EscapeDataString($Name))/1 CFNetwork/1399 Darwin/22.1.0"
+  $ua = "$([uri]::EscapeDataString($Name))/1 CFNetwork/1406.0.4 Darwin/22.4.0"
   $magicUrl = "https://api.tegnadigital.com/mobile/content-ro/getContentListV2ForNativeUx/$($Id)/video/$($Qty)/news/dvr?subscription-key=$($Key)"
   $streams = Invoke-RestMethod -Method Get -Uri $magicUrl -UserAgent $ua
 
