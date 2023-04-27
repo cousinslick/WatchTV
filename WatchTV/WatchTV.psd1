@@ -1,6 +1,6 @@
 @{
   RootModule = '.\WatchTV.psm1'
-  ModuleVersion = '0.32.0'
+  ModuleVersion = '0.33.0'
   GUID = 'dbaa107f-646d-4ffd-9f6f-54b79131cf7a'
   Author = ''
   CompanyName = ''
@@ -11,6 +11,7 @@
     , "Get-FCNStreamUrl"
     , "Get-Fox5ATLStreamUrl"
     , "Get-KAREStreamUrl"
+    , "Get-KATVStreamUrl"
     , "Get-KCBSStreamUrl"
     , "Get-KCNCStreamUrl"
     , "Get-KCTVStreamUrl"
@@ -83,6 +84,7 @@
     , "Get-GrayStreamUrl"
     , "Get-HearstStreamUrl"
     , "Get-NexstarStreamUrl"
+    , "Get-SinclairStreamUrl"
     , "Get-YouTubeLiveIds"
   )
   CmdletsToExport = @()
