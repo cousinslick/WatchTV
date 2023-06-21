@@ -19,7 +19,10 @@ function Get-CabletownStreamUrl
   param(
     [string] $Url
   )
-  
+
+  $live = "Live"
+  if ($Url -like "*telemundo*") { $live = "En Vivo" }
+
   $page = Invoke-WebRequest -Uri $Url -UseBasicParsing -UserAgent (Get-UA)
 
   if ($page.Content -match 'data-videos="(.+?)"')
@@ -27,7 +30,13 @@ function Get-CabletownStreamUrl
     $dataVideos = [System.Web.HttpUtility]::HtmlDecode($Matches[1]) | ConvertFrom-Json
     Write-Verbose -Message "Got $($dataVideos.Count) data-videos"
 
-    $liveVideo = $dataVideos | Where-Object -FilterScript { $_.date_string -eq "Live" }
+    if ($dataVideos.Count -eq 0)
+    {
+      Write-Warning -Message "Failed to retrieve videos."
+      return
+    }
+
+    $liveVideo = $dataVideos | Where-Object -FilterScript { $_.date_string.StartsWith($live) }
     Write-Verbose -Message "Found $($liveVideo.Count) video with date_string=Live: $($liveVideo.canonical_url)"
 
     if ($liveVideo.Count -gt 1)
@@ -58,7 +67,7 @@ function Get-CabletownStreamUrl
 
     Write-Verbose -Message "pdkAcct=$($nbc.pdkAcct); fwSSID=$($nbc.video.fwSSID); fwNetworkID=$($nbc.video.fwNetworkID)"
   }
-  else 
+  else
   {
     Write-Error -Message "Failed to extract var nbc script block."
     return
@@ -78,7 +87,7 @@ function Get-CabletownStreamUrl
 
   $smilResponse = Invoke-WebRequest -Uri $thePlatformUrl -UseBasicParsing -UserAgent (Get-UA)
   $smil = [xml][System.Text.Encoding]::UTF8.GetString($smilResponse.Content)
-  
+
   Write-Verbose -Message "Returning $($smil.smil.body.seq.switch.video.src)"
   $smil.smil.body.seq.switch.video.src
 }
