@@ -1,6 +1,6 @@
 @{
   RootModule = '.\WatchTV.psm1'
-  ModuleVersion = '0.40.0'
+  ModuleVersion = '0.41.0'
   GUID = 'dbaa107f-646d-4ffd-9f6f-54b79131cf7a'
   Author = ''
   CompanyName = ''
@@ -26,6 +26,7 @@
     , "Get-KNBCStreamUrl"
     , "Get-KNSDStreamUrl"
     , "Get-KNTVStreamUrl"
+    , "Get-KOCOStreamUrl"
     , "Get-KOTVStreamUrl"
     , "Get-KOVRStreamUrl"
     , "Get-KPIXStreamUrl"
