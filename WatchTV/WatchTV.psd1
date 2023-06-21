@@ -1,6 +1,6 @@
 @{
   RootModule = '.\WatchTV.psm1'
-  ModuleVersion = '0.39.0'
+  ModuleVersion = '0.42.0'
   GUID = 'dbaa107f-646d-4ffd-9f6f-54b79131cf7a'
   Author = ''
   CompanyName = ''
@@ -21,15 +21,18 @@
     , "Get-KFORStreamUrl"
     , "Get-KGTVStreamUrl"
     , "Get-KJRHStreamUrl"
+    , "Get-KMPHStreamUrl"
     , "Get-KMTVStreamUrl"
     , "Get-KNBCStreamUrl"
     , "Get-KNSDStreamUrl"
     , "Get-KNTVStreamUrl"
+    , "Get-KOCOStreamUrl"
     , "Get-KOTVStreamUrl"
     , "Get-KOVRStreamUrl"
     , "Get-KPIXStreamUrl"
     , "Get-KPNXStreamUrl"
     , "Get-KSTUStreamUrl"
+    , "Get-KSHBStreamUrl"
     , "Get-KSWBStreamUrl"
     , "Get-KTABStreamUrl"
     , "Get-KTSMStreamUrl"
@@ -46,6 +49,7 @@
     , "Get-WBZStreamUrl"
     , "Get-WCAUStreamUrl"
     , "Get-WCBSStreamUrl"
+    , "Get-WCCBStreamUrl"
     , "Get-WCCOStreamUrl"
     , "Get-WESHStreamUrl"
     , "Get-WFLA38StreamUrl"
