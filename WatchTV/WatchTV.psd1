@@ -1,6 +1,6 @@
 @{
   RootModule = '.\WatchTV.psm1'
-  ModuleVersion = '0.45.0'
+  ModuleVersion = '0.46.0'
   GUID = 'dbaa107f-646d-4ffd-9f6f-54b79131cf7a'
   Author = ''
   CompanyName = ''
@@ -61,6 +61,7 @@
     , "Get-WHASStreamUrl"
     , "Get-WJZStreamUrl"
     , "Get-WKBWStreamUrl"
+    , "Get-WLWTStreamUrl"
     , "Get-WMAQStreamUrl"
     , "Get-WNBCStreamUrl"
     , "Get-WNEUStreamUrl"
