@@ -1,6 +1,6 @@
 @{
   RootModule = '.\WatchTV.psm1'
-  ModuleVersion = '0.44.1'
+  ModuleVersion = '0.45.0'
   GUID = 'dbaa107f-646d-4ffd-9f6f-54b79131cf7a'
   Author = ''
   CompanyName = ''
@@ -9,7 +9,6 @@
   FunctionsToExport = @(
     "Get-ABC7StreamUrl"
     , "Get-FCNStreamUrl"
-    , "Get-Fox5ATLStreamUrl"
     , "Get-KAREStreamUrl"
     , "Get-KATVStreamUrl"
     , "Get-KCBSStreamUrl"
@@ -22,6 +21,7 @@
     , "Get-KGTVStreamUrl"
     , "Get-KJRHStreamUrl"
     , "Get-KMPHStreamUrl"
+    , "Get-KMSPStreamUrl"
     , "Get-KMTVStreamUrl"
     , "Get-KNBCStreamUrl"
     , "Get-KNSDStreamUrl"
@@ -31,8 +31,8 @@
     , "Get-KOVRStreamUrl"
     , "Get-KPIXStreamUrl"
     , "Get-KPNXStreamUrl"
-    , "Get-KSTUStreamUrl"
     , "Get-KSHBStreamUrl"
+    , "Get-KSTUStreamUrl"
     , "Get-KSWBStreamUrl"
     , "Get-KTABStreamUrl"
     , "Get-KTSMStreamUrl"
@@ -42,6 +42,7 @@
     , "Get-KXANStreamUrl"
     , "Get-KXASStreamUrl"
     , "Get-KYWStreamUrl"
+    , "Get-WAGAtreamUrl"
     , "Get-WALAStreamUrl"
     , "Get-WBBMStreamUrl"
     , "Get-WBIRStreamUrl"
@@ -92,6 +93,7 @@
     , "Get-UA"
     , "Get-CabletownStreamUrl"
     , "Get-EyemarkStreamUrl"
+    , "Get-FoxStreamUrl"
     , "Get-GenericStreamUrl"
     , "Get-GrayStreamUrl"
     , "Get-HearstStreamUrl"
