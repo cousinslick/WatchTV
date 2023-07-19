@@ -1,6 +1,6 @@
 @{
   RootModule = '.\WatchTV.psm1'
-  ModuleVersion = '0.49.0'
+  ModuleVersion = '0.50.0'
   GUID = 'dbaa107f-646d-4ffd-9f6f-54b79131cf7a'
   Author = ''
   CompanyName = ''
@@ -83,6 +83,7 @@
     , "Get-WZTVStreamUrl"
     , "Get-XEWTStreamUrl"
 
+    , "Get-CTVTorontoDVR"
     , "Get-TegnaDVR"
     , "Get-FCNDVR"
     , "Get-KAREDVR"
