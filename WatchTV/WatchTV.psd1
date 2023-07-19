@@ -1,6 +1,6 @@
 @{
   RootModule = '.\WatchTV.psm1'
-  ModuleVersion = '0.46.0'
+  ModuleVersion = '0.50.0'
   GUID = 'dbaa107f-646d-4ffd-9f6f-54b79131cf7a'
   Author = ''
   CompanyName = ''
@@ -44,7 +44,9 @@
     , "Get-KYWStreamUrl"
     , "Get-WAGAtreamUrl"
     , "Get-WALAStreamUrl"
+    , "Get-WBALStreamUrl"
     , "Get-WBBMStreamUrl"
+    , "Get-WBFFStreamUrl"
     , "Get-WBIRStreamUrl"
     , "Get-WBTSStreamUrl"
     , "Get-WBZStreamUrl"
@@ -81,13 +83,16 @@
     , "Get-WZTVStreamUrl"
     , "Get-XEWTStreamUrl"
 
+    , "Get-CTVTorontoDVR"
     , "Get-TegnaDVR"
     , "Get-FCNDVR"
     , "Get-KAREDVR"
     , "Get-KFMBDVR"
     , "Get-KIIIDVR"
+    , "Get-KINGDVR"
     , "Get-KPNXDVR"
     , "Get-WHASDVR"
+    , "Get-WPMTDVR"
     , "Get-WTHRDVR"
     , "Get-WXIADVR"
 
