@@ -1,6 +1,6 @@
 @{
   RootModule = '.\WatchTV.psm1'
-  ModuleVersion = '0.41.0'
+  ModuleVersion = '0.47.0'
   GUID = 'dbaa107f-646d-4ffd-9f6f-54b79131cf7a'
   Author = ''
   CompanyName = ''
@@ -9,7 +9,6 @@
   FunctionsToExport = @(
     "Get-ABC7StreamUrl"
     , "Get-FCNStreamUrl"
-    , "Get-Fox5ATLStreamUrl"
     , "Get-KAREStreamUrl"
     , "Get-KATVStreamUrl"
     , "Get-KCBSStreamUrl"
@@ -22,6 +21,7 @@
     , "Get-KGTVStreamUrl"
     , "Get-KJRHStreamUrl"
     , "Get-KMPHStreamUrl"
+    , "Get-KMSPStreamUrl"
     , "Get-KMTVStreamUrl"
     , "Get-KNBCStreamUrl"
     , "Get-KNSDStreamUrl"
@@ -31,6 +31,7 @@
     , "Get-KOVRStreamUrl"
     , "Get-KPIXStreamUrl"
     , "Get-KPNXStreamUrl"
+    , "Get-KSHBStreamUrl"
     , "Get-KSTUStreamUrl"
     , "Get-KSWBStreamUrl"
     , "Get-KTABStreamUrl"
@@ -41,13 +42,16 @@
     , "Get-KXANStreamUrl"
     , "Get-KXASStreamUrl"
     , "Get-KYWStreamUrl"
+    , "Get-WAGAtreamUrl"
     , "Get-WALAStreamUrl"
+    , "Get-WBALStreamUrl"
     , "Get-WBBMStreamUrl"
     , "Get-WBIRStreamUrl"
     , "Get-WBTSStreamUrl"
     , "Get-WBZStreamUrl"
     , "Get-WCAUStreamUrl"
     , "Get-WCBSStreamUrl"
+    , "Get-WCCBStreamUrl"
     , "Get-WCCOStreamUrl"
     , "Get-WESHStreamUrl"
     , "Get-WFLA38StreamUrl"
@@ -58,8 +62,10 @@
     , "Get-WHASStreamUrl"
     , "Get-WJZStreamUrl"
     , "Get-WKBWStreamUrl"
+    , "Get-WLWTStreamUrl"
     , "Get-WMAQStreamUrl"
     , "Get-WNBCStreamUrl"
+    , "Get-WNEUStreamUrl"
     , "Get-WOODStreamUrl"
     , "Get-WPIXStreamUrl"
     , "Get-WPMTStreamUrl"
@@ -89,6 +95,7 @@
     , "Get-UA"
     , "Get-CabletownStreamUrl"
     , "Get-EyemarkStreamUrl"
+    , "Get-FoxStreamUrl"
     , "Get-GenericStreamUrl"
     , "Get-GrayStreamUrl"
     , "Get-HearstStreamUrl"
