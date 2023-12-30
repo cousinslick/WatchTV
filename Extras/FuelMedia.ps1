@@ -123,17 +123,17 @@ while (($stopwatch.Elapsed.TotalSeconds -lt $endDurationSec) -and ($stopwatch.El
     Write-Warning -Message "Failed to update position. f=$($from); t=$($to); until=$($endDurationSec); elapsed=$($stopwatch.Elapsed.TotalSeconds)"
   }
 
-  if ([math]::round($stopWatch.Elapsed.TotalSeconds) % 10 -eq 0) { Write-Trace -Message "ElapsedMin=$($stopwatch.Elapsed.TotalMinutes); MaxDurationMin=$($maxDurationMin); EndDurationMin=$($endDurationSec/60)" -Context "Heartbeat $($instanceId)" -Quiet }
+  if ([math]::round($stopWatch.Elapsed.TotalSeconds) % 10 -eq 0) { Write-Host "ElapsedMin=$($stopwatch.Elapsed.TotalMinutes); MaxDurationMin=$($maxDurationMin); EndDurationMin=$($endDurationSec/60)" -Context "Heartbeat $($instanceId)" -Quiet }
 }
 
 $stopwatch.Stop()
 
 if (!$ytdlp.HasExited)
 {
-  Write-Output -InputObject "Closing YouTubeDl"
+  Write-Output -InputObject "Closing yt-dlp"
   try { $ytdlp.CloseMainWindow() } catch {}
   while (!$ytdlp.HasExited) { Start-Sleep -Milliseconds 250 }
-  Write-Output -InputObject "YouTubeDl has exited"
+  Write-Output -InputObject "yt-dlp has exited"
 }
 
 $partName = "$($fullName).part"
@@ -145,3 +145,31 @@ Rename-Item -Path $partName -NewName $fullName
 if (!(Test-Path -Path $fullName)) { Write-Output -InputObject "Waiting for file rename..." }
 $now = Get-Date
 while (!(Test-Path -Path $fullName) -and (((Get-Date) - $now).TotalMinutes -lt 1)) { Start-Sleep -Milliseconds 250 }
+
+<#
+.SYNOPSIS
+Record live stream video from supported websites
+
+.DESCRIPTION
+A sample implementation that combines stream recording and progress polling.
+
+.PARAMETER Url
+The URL to a live stream page on a supported website
+
+.PARAMETER Path
+The local path where the recorded video should be saved
+
+.PARAMETER FileName
+The local filename of the recorded video
+
+.PARAMETER maxDurationMin
+How long the recording should be allowed to run, in minutes
+
+.EXAMPLE
+.\FuelMedia.ps1 -Url "https://example.com/live-video/" -Path "C:\Videos" -FileName "Recording.mp4" -MaxDurationMin 30
+
+.NOTES
+yt-dlp (and probably ffmpeg) should be set up in the PATH or similar such that they are globally invokable
+
+As-is, no guarantee, use at your own risk, etc. This sample implementation was derived from a working script, but platform changes could render it unusable at any time.
+#>
