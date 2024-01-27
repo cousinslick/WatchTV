@@ -30,10 +30,10 @@ $channelGuid = $Matches[1]
 $sessionGuid = [guid]::NewGuid().guid
 
 # This magic master playlist URL was obtained from dev tools while observing the livestream
-$masterUrl = "https://fuel-streaming-prod01.fuelmedia.io/v1/sem/$($channelGuid).m3u8?sessionId=$($sessionGuid)&floating=false&adMethod=1&a-ap=0&a-mute=0&a-dnt=1&a-adPlacement=1&a-adSkippability=0"
+[uri]$masterUrl = "https://fuel-streaming-prod01.fuelmedia.io/v1/sem/$($channelGuid).m3u8?sessionId=$($sessionGuid)&floating=false&adMethod=1&a-ap=0&a-mute=0&a-dnt=1&a-adPlacement=1&a-adSkippability=0"
 
 # Some tools have trouble parsing the correct video URL from the master playlist, so we do that manually here
-$m3uPattern = '#EXT-X-STREAM-INF.+?BANDWIDTH=(\d+).+?\n(http.+)'
+$m3uPattern = '#EXT-X-STREAM-INF.+?BANDWIDTH=(\d+).+?\n(.+)'
 
 $masterResp = Invoke-WebRequest -Uri $masterUrl -UserAgent (Get-UA)
 $masterPlaylist = ConvertTo-String -Bytes $masterResp.Content
@@ -42,6 +42,12 @@ $masterStreamUrls = foreach ($stream in $masterPlaylistStreams.Matches) { @{$str
 
 # Take the one with the biggest bandwidth
 $streamUrl = [string]($masterStreamUrls | Sort-Object -Property Keys | Select-Object -Last 1).Values
+
+# Accommodate relative pathed stream URLs
+if ($streamUrl -notlike "http*")
+{
+  $streamUrl = "$($masterURl.Scheme)://$($masterUrl.DnsSafeHost)$($streamUrl)"
+}
 
 # Now, this is where things start to get really dumb.
 # The above streamUrl parcels out video segments a few seconds at a time. While the stream is being consumed, we
