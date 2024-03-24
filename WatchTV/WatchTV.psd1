@@ -1,6 +1,6 @@
 @{
   RootModule = '.\WatchTV.psm1'
-  ModuleVersion = '0.60.0'
+  ModuleVersion = '0.64.1'
   GUID = 'dbaa107f-646d-4ffd-9f6f-54b79131cf7a'
   Author = ''
   CompanyName = ''
@@ -34,12 +34,15 @@
     , "Get-KOVRStreamUrl"
     , "Get-KPIXStreamUrl"
     , "Get-KPNXStreamUrl"
+    , "Get-KSAZStreamUrl"
+    , "Get-KSBWStreamUrl"
     , "Get-KSHBStreamUrl"
     , "Get-KSTUStreamUrl"
     , "Get-KSWBStreamUrl"
     , "Get-KTABStreamUrl"
     , "Get-KTAZStreamUrl"
     , "Get-KTSMStreamUrl"
+    , "Get-KTVHStreamUrl"
     , "Get-KTVTStreamUrl"
     , "Get-KUSIStreamUrl"
     , "Get-KVEAStreamUrl"
@@ -76,6 +79,7 @@
     , "Get-WNBCStreamUrl"
     , "Get-WNEUStreamUrl"
     , "Get-WOODStreamUrl"
+    , "Get-WPHLStreamUrl"
     , "Get-WPIXStreamUrl"
     , "Get-WPMTStreamUrl"
     , "Get-WPRIStreamUrl"
@@ -84,6 +88,7 @@
     , "Get-WTAEStreamUrl"
     , "Get-WTHRStreamUrl"
     , "Get-WTKRStreamUrl"
+    , "Get-WTOCStreamUrl"
     , "Get-WTVFStreamUrl"
     , "Get-WTVJStreamUrl"
     , "Get-WVITStreamUrl"
@@ -109,6 +114,7 @@
     , "Get-WPMTDVR"
     , "Get-WPTVDVR"
     , "Get-WTHRDVR"
+    , "Get-WTSPDVR"
     , "Get-WTVFDVR"
     , "Get-WXIADVR"
     , "Get-WXMIDVR"
