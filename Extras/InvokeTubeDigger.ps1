@@ -1,14 +1,14 @@
 param (
-  [Parameter(Mandatory = $true)][string] $Url,
+  [string] $Url,
   [int] $DurationSec,
   [string] $OutputDir,
   [string] $OutputBaseName,
   [ValidateSet("rec", "dl", "auto")][string] $Mode = "auto",
   [ValidatePattern("\b(all|low|mid|high|\d+[pPkK])\b")][string] $Resolution = "high",
-  [switch] $HideWindow,
+  [switch] $ShowWindow,
   [switch] $Unmute,
   [string] $TempDir = ([IO.Path]::GetTempPath()),
-  [switch] $FixContainer
+  [switch] $ReContainer
 )
 
 #region helper functions
@@ -126,9 +126,9 @@ if (($null -notlike $OutputBaseName) -and ($null -like $OutputDir))
   throw [System.ArgumentException]::new("Must also specify -OutputDir with -OutputBaseName")
 }
 
-if ($FixContainer -and ($null -like $OutputDir))
+if ($ReEncode -and ($null -like $OutputDir))
 {
-  Write-Trace -Message "For boring implementaiton reasons, you must also specify -OutputDir to use -FixContainer." -Error -Context $runContext
+  Write-Trace -Message "For boring implementaiton reasons, you must also specify -OutputDir to use -ReEncode." -Error -Context $runContext
   throw [System.ArgumentException]::new("Must also specify -OutputDir with -ReEncode")
 }
 
@@ -147,7 +147,7 @@ if ($Mode -ne "auto") { $tdArgs.Add("-$($Mode)") }
 $tdArgs.Add("-res=$($Resolution)")
 if ($DurationSec -ne 0) { $tdArgs.Add("-blank=$($DurationSec)") }
 if ($null -notlike $OutputDir) { $tdArgs.Add("-outputdir=`"$($TempDir)`"") }
-if ($HideWindow) { $tdArgs.Add("-hide") }
+if (!$ShowWindow) { $tdArgs.Add("-hide") }
 if (!$Unmute) { $tdArgs.Add("-mute") }
 $tdArgs.Add("-exit")
 
@@ -179,10 +179,6 @@ while ($inWaitLoop)
 }
 
 Write-LogEvent -Message "Closing TubeDigger processes."
-if ($HideWindow)
-{
-  Write-LogEvent -Message "TubeDigger was launched minimize and may not close gracefully. The recording may become corrupt when the application is force closed. For best results, omit -HideWindow." -Warning
-}
 
 $tdChildProcName = (Get-Item -Path $tdChildProc.Path).BaseName
 $tdChildProcs = Get-Process -Name $tdChildProcName
@@ -223,11 +219,11 @@ if ($null -notlike $OutputDir)
   Write-LogEvent -Message "tempItem=$($tempItem.FullName); Length=$($tempItem.Length)" -Quiet
   if ($null -like $tempItem) { throw [System.IO.FileNotFoundException]::new("Recording not found in TempDir") }
 
-  if ($FixContainer)
+  if ($ReContainer)
   {
     Convert-VideoContainer -Path $tempItem.FullName -Ext ".mp4"
     $tempItem = Get-Item -Path ([IO.Path]::Combine($tempItem.DirectoryName, "$($tempItem.BaseName).mp4"))
-    Write-LogEvent -Message "case=FixContainer; tempItem=$($tempItem.FullName); Length=$($tempItem.Length)" -Quiet
+    Write-LogEvent -Message "case=ReContainer; tempItem=$($tempItem.FullName); Length=$($tempItem.Length)" -Quiet
   }
 
   if (!(Test-Path -Path $OutputDir)) { $null = New-Item -Path $OutputDir -ItemType Directory }
@@ -257,7 +253,7 @@ A PowerShell wrapper around the command line interface for TubeDigger, a commerc
 The URL of the web page hosting the video player for the streaming content. Not a stream playlist or manifest.
 
 .PARAMETER DurationSec
-The number of seconds TubeDigger should record the stream.
+In "rec" mode, the number of seconds TubeDigger should record the stream.
 
 .PARAMETER OutputDir
 Optionally, the full path to the directory where the recorded stream should be stored. If omitted, the recording will be saved to the default path configured in TubeDigger.
@@ -271,8 +267,8 @@ Optional. Run TubeDigger in a specific capture mode. Either "rec", "dl", or "aut
 .PARAMETER Resolution
 Optional. The target resolution TubeDigger should attempt to record. Either a preset ("all", "low", "mid", "high"), a resolution ("720p", "1080p"), or a bitrage ("2500k"). Default "high".
 
-.PARAMETER HideWindow
-Optional. Start TubeDigger minimized to the system tray instead of showing the UI. This may lead to corrupt recordings.
+.PARAMETER ShowWindow
+Optional. Show the TubeDigger UI instead of starting minimized to the system tray.
 
 .PARAMETER Unmute
 Optional. Start TubeDigger unmuted.
@@ -284,7 +280,7 @@ Optional. A path to temporarily store recordings when using OutputDir and/or Out
 Optional. Requires ffmpeg. Use with -Mode dl to copy the video and audio streams into an mp4 container, which may help fix playback issues.
 
 .EXAMPLE
-.\InvokeTubeDigger.ps1 -Url 'https://example.com/live-stream' -DurationSec (60 * 30) -OutputDir 'C:\Videos' -OutputBaseName 'ExampleStream' -Mode rec
+.\InvokeTubeDigger.ps1 -Url 'https://example.com/live-stream' -DurationSec (60 * 30) -OutputDir 'C:\Videos' -OutputBaseName 'ExampleStream' -ReContainer -ShowWindow
 
 .NOTES
 Requires a registered version of TubeDigger to be installed at the default location.
@@ -293,7 +289,9 @@ TubeDigger configurations may affect the usability of this script. The TubeDigge
 
 If dl mode does not work, try deselecting 'Detect all resolutions/bitrates of video' in settings.
 
-The -FixContainer switch requires ffmpeg to be executable from the working directory (i.e., in a directory configured in your PATH environment variable)
+The -ReContainer switch requires ffmpeg to be executable from the working directory (i.e., in a directory configured in your PATH environment variable)
+
+In dl mode, recordings may never finish if the source streams an infinite loop for "on-demand" viewing.
 
 .LINK
 https://www.tubedigger.com/
