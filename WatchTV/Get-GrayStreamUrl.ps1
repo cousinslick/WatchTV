@@ -31,7 +31,9 @@ function Get-GrayStreamInfo
     [string] $StreamTitle,
 
     [Parameter(ParameterSetName = "StreamId", Mandatory = $true)]
-    [string] $StreamId
+    [string] $StreamId,
+
+    [int] $Count = 12
   )
 
   function GetTokenInfo
@@ -78,7 +80,7 @@ function Get-GrayStreamInfo
 
   $getVideoGql = [ordered]@{
     deviceId = $deviceId;
-    queryString = '{"query":" query GrayWebAppsDefaultData($expirationSeconds: Int, $vodCount: Int){ liveChannels { id title description callsign listImages { type url size } posterImages { type url size } isNew type status onNow { id title description episodeTitle tvRating startTime endTime duration isLooped isOffAir airDate } onNext { id title description episodeTitle tvRating startTime endTime duration isLooped isOffAir airDate } isNielsenEnabled isClosedCaptionEnabled location networkAffiliation taxonomy { facet terms } } firstLiveChannel: liveChannels(first: 1) { id title description callsign listImages { type url size } posterImages { type url size } isNew type status onNow { id title description episodeTitle tvRating startTime endTime duration isLooped isOffAir airDate } onNext { id title description episodeTitle tvRating startTime endTime duration isLooped isOffAir airDate } isNielsenEnabled isClosedCaptionEnabled location networkAffiliation taxonomy { facet terms } streamUrl(expiresIn: $expirationSeconds) } videoOnDemand(first: $vodCount){ id title description duration airDate listImages { type url size } posterImages { type url size } } } ","variables":{"expirationSeconds":300,"vodCount":36}}'
+    queryString = '{"query":" query GrayWebAppsDefaultData($expirationSeconds: Int, $vodCount: Int){ liveChannels { id title description callsign listImages { type url size } posterImages { type url size } isNew type status onNow { id title description episodeTitle tvRating startTime endTime duration isLooped isOffAir airDate } onNext { id title description episodeTitle tvRating startTime endTime duration isLooped isOffAir airDate } isNielsenEnabled isClosedCaptionEnabled location networkAffiliation taxonomy { facet terms } } firstLiveChannel: liveChannels(first: 1) { id title description callsign listImages { type url size } posterImages { type url size } isNew type status onNow { id title description episodeTitle tvRating startTime endTime duration isLooped isOffAir airDate } onNext { id title description episodeTitle tvRating startTime endTime duration isLooped isOffAir airDate } isNielsenEnabled isClosedCaptionEnabled location networkAffiliation taxonomy { facet terms } streamUrl(expiresIn: $expirationSeconds) } videoOnDemand(first: $vodCount){ id title description duration airDate listImages { type url size } posterImages { type url size } } } ","variables":{"expirationSeconds":300,"vodCount":PLACEHOLDER-VODCOUNT}}' -replace 'PLACEHOLDER-VODCOUNT', $Count
   } | ConvertTo-Json -Compress
   $getVideoToken = GetTokenInfo -DeviceId $deviceId -Query $getVideoGql
   $videoStreams = DoGraphQuery -TokenInfo $getVideoToken
@@ -133,7 +135,7 @@ function Get-GrayStreamInfo
 
   $getVodGql = [ordered]@{
     deviceId = $deviceId
-    queryString = '{"query":"query GrayWebAppsVodItemData($vodId: ID!, $vodCount: Int){ videoOnDemandItem (id: $vodId){ id title description duration airDate listImages { type url size } posterImages { type url size } streamUrl } liveChannels { id title description callsign listImages { type url size } posterImages { type url size } isNew type status onNow { id title description episodeTitle tvRating startTime endTime duration isLooped isOffAir airDate} onNext { id title description episodeTitle tvRating startTime endTime duration isLooped isOffAir airDate} isNielsenEnabled isClosedCaptionEnabled location networkAffiliation taxonomy { facet terms } } videoOnDemand (first: $vodCount){ id title description duration airDate listImages { type url size } posterImages { type url size } } }","variables":{"vodCount":12,"vodId":"PLACEHOLDER-VODID"}}' -replace 'PLACEHOLDER-VODID', $theStream.Id
+    queryString = '{"query":"query GrayWebAppsVodItemData($vodId: ID!, $vodCount: Int){ videoOnDemandItem (id: $vodId){ id title description duration airDate listImages { type url size } posterImages { type url size } streamUrl } liveChannels { id title description callsign listImages { type url size } posterImages { type url size } isNew type status onNow { id title description episodeTitle tvRating startTime endTime duration isLooped isOffAir airDate} onNext { id title description episodeTitle tvRating startTime endTime duration isLooped isOffAir airDate} isNielsenEnabled isClosedCaptionEnabled location networkAffiliation taxonomy { facet terms } } videoOnDemand (first: $vodCount){ id title description duration airDate listImages { type url size } posterImages { type url size } } }","variables":{"vodCount":PLACEHOLDER-VODCOUNT,"vodId":"PLACEHOLDER-VODID"}}' -replace 'PLACEHOLDER-VODID', $theStream.Id -replace 'PLACEHOLDER-VODCOUNT', $Count
   } | ConvertTo-Json -Compress
   $getVodToken = GetTokenInfo -DeviceId $deviceId -Query $getVodGql
   $vodStream = DoGraphQuery -TokenInfo $getVodToken
