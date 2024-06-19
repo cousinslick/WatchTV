@@ -26,7 +26,7 @@ function Get-FoxStreamUrl
     if ($htmlScriptBlock -cmatch "\w+?\.webKey=(\w+?)") { $anvackParam = $Matches[1] }
 
     # Next, get the parameter values
-    if ($htmlScriptBlock -match ".*\((.*)\)") { $paramValues = $Matches[1] -split "," }
+    if ($htmlScriptBlock -match "\}\((.+)\)$") { $paramValues = $Matches[1] -split "," }
 
     <#
     $parameters = [System.Collections.ArrayList]::new()
