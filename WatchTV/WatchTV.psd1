@@ -1,6 +1,6 @@
 @{
   RootModule = '.\WatchTV.psm1'
-  ModuleVersion = '0.66.0'
+  ModuleVersion = '0.71.0'
   GUID = 'dbaa107f-646d-4ffd-9f6f-54b79131cf7a'
   Author = ''
   CompanyName = ''
@@ -20,6 +20,7 @@
     , "Get-KFMBStreamUrl"
     , "Get-KFORStreamUrl"
     , "Get-KGTVStreamUrl"
+    , "Get-KIONStreamUrl"
     , "Get-KJRHStreamUrl"
     , "Get-KMOVStreamUrl"
     , "Get-KMPHStreamUrl"
@@ -34,6 +35,7 @@
     , "Get-KOVRStreamUrl"
     , "Get-KPIXStreamUrl"
     , "Get-KPNXStreamUrl"
+    , "Get-KPTVStreamUrl"
     , "Get-KSAZStreamUrl"
     , "Get-KSBWStreamUrl"
     , "Get-KSHBStreamUrl"
@@ -52,6 +54,7 @@
     , "Get-KYWStreamUrl"
     , "Get-WAGAtreamUrl"
     , "Get-WALAStreamUrl"
+    , "Get-WAPTStreamUrl"
     , "Get-WBALStreamUrl"
     , "Get-WBBMStreamUrl"
     , "Get-WBFFStreamUrl"
@@ -59,6 +62,7 @@
     , "Get-WBTSStreamUrl"
     , "Get-WBZStreamUrl"
     , "Get-WCAUStreamUrl"
+    , "Get-WCAXStreamUrl"
     , "Get-WCBSStreamUrl"
     , "Get-WCCBStreamUrl"
     , "Get-WCCOStreamUrl"
@@ -92,6 +96,7 @@
     , "Get-WTOCStreamUrl"
     , "Get-WTVFStreamUrl"
     , "Get-WTVJStreamUrl"
+    , "Get-WTVTStreamUrl"
     , "Get-WVITStreamUrl"
     , "Get-WWJStreamUrl"
     , "Get-WXMIStreamUrl"
@@ -104,14 +109,18 @@
     , "Get-NewsONDVR"
     , "Get-FCNDVR"
     , "Get-KAREDVR"
+    , "Get-KCENDVR"
     , "Get-KFMBDVR"
     , "Get-KIIIDVR"
     , "Get-KINGDVR"
     , "Get-KPNXDVR"
+    , "Get-KVUEDVR"
     , "Get-WFAADVR"
+    , "Get-WFMYDVR"
     , "Get-WFTXDVR"
     , "Get-WHASDVR"
     , "Get-WJZDVR"
+    , "Get-WNEPDVR"
     , "Get-WPMTDVR"
     , "Get-WPTVDVR"
     , "Get-WTHRDVR"
