@@ -6,27 +6,43 @@ function Get-NexstarStreamUrl
 
   $ProgressPreference = "SilentlyContinue"
 
+  $curlExe = "curl"
+
+  # Modern versions of Windows include a cURL binary in the Windows directory so let's
+  # specify the absolute path to avoid conflicts wihth Windows Powershell 5.1 that effected
+  # a 'curl' alias for Invoke-WebRequest, back before Windows shipped curl.exe
+  if ($PSVersionTable.Platform -eq "Win32NT")
+  {
+    $curlExe = [IO.Path]::Combine($env:SystemRoot, "system32", "curl.exe")
+
+    if (!(Test-Path -Path $curlExe))
+    {
+      Write-Warning -Message "cURL not found at $($curlExe)"
+      return $false
+    }
+  }
+
+
   try
   {
-    $page = Invoke-WebRequest -Uri $Url -UseBasicParsing -UserAgent (Get-UA)
+    # It seems that Nexstar have implemented some automation blocking that causes Invoke-WebRequest (and Chrome via Puppeteer)
+    # to fail to retrieve the live streaming webpage that contains information we need to extract. cURL (and Firefox via Puppeteer)
+    # works fine, so we'll go that route.
+    $page = &$curlExe -s -i -A (Get-UA) $Url
 
-    # There's an article tag with a data-video_params attribute containing a HTML encoded JSON payload. We're interested in that JSON payload
+    # There's an element with a data-video_params attribute containing a HTML encoded JSON payload. We're interested in that JSON payload
     $pattern = 'data-video_params\s?=\s?"(.+?)"'
-    if ($page.Content -match $pattern)
+    $patternMatch = $page -match $pattern
+    # When matching against the string Content attribute on the result from Invoke-WebRequest, the result was a bool and a $Matches array
+    # with the regex result. But when matching against the string output from cURL, we just get the raw match. So let's accomodate this.
+    if ($patternMatch -is [bool] -and $patternMatch -eq $true -and $Matches -is [array])
     {
-      $anvato = [System.Net.WebUtility]::HtmlDecode($Matches[1]) -replace "'/", "'" | ConvertFrom-Json
+      $patternMatch = $Matches[1]
     }
-
-    # !! The old pattern stopped working in Feb. 2024, but just in case some sites haven't been updated
-    # There's a script tag on the page that contains a window.loadAnvato() call with a JSON payload. We're interested in that JSON payload
-    if ($null -eq $anvato)
-    {
-      $pattern = "<script>window\.loadAnvato\((.*?)\);</script>"
-      if ($page.Content -match $pattern)
-      {
-        $anvato = $Matches[1] | ConvertFrom-Json
-      }
-    }
+    if ($null -like $patternMatch) { return $null }
+    # Strip off the stuff we don't want in case we got the cURL -match behavior instead of the IWR -match behavior.
+    $patternMatch = $patternMatch -replace 'data-video_params="' -replace '"$'
+    $anvato = [System.Net.WebUtility]::HtmlDecode($patternMatch) -replace "'/", "'" | ConvertFrom-Json
 
     if ($null -eq $anvato) { return }
 
