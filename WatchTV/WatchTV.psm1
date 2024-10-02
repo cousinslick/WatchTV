@@ -1,3 +1,4 @@
+#Requires -Version 7
 Push-Location -Path $PSScriptRoot
 
 $ProgressPreference = "SilentlyContinue"

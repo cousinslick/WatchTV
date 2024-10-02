@@ -1,7 +1,9 @@
 function Get-YouTubeLiveIds
 {
+  [CmdletBinding(DefaultParameterSetName = "ChanID")]
   param (
-    [Parameter(Mandatory = $true)][string] $ChannelId,
+    [Parameter(ParameterSetName = "ChanID", Mandatory = $true)][string] $ChannelId,
+    [Parameter(ParameterSetName = "Handle", Mandatory = $true)][string] $Handle,
     [switch] $Newest,
     [switch] $IdOnly,
     [switch] $PassThru
@@ -14,7 +16,19 @@ function Get-YouTubeLiveIds
   $ytApiKey = ""
   if ($null -like $ytApiKey) { throw "Configure your YouTube API key in Get-YouTubeLiveIds before calling this function." }
 
-  $uri = [uri]::new("https://youtube.googleapis.com/youtube/v3/search?part=snippet&channelId=$($ChannelId)&order=date&key=$($ytApiKey)")
+  if ($PSCmdlet.ParameterSetName -eq "Handle")
+  {
+    $idLookupUri = [uri]::new("https://www.googleapis.com/youtube/v3/channels?part=id&forHandle=$($Handle)&maxResults=1&key=$($ytApiKey)")
+    try
+    {
+      $idResult = Invoke-RestMethod -Method Get -Uri $idLookupUri
+      $ChannelId = $idResult.items.id
+    }
+    catch { return $null }
+    Write-Verbose "Channel ID for Handle '$($Handle)' is '$($ChannelId)'"
+  }
+
+  $uri = [uri]::new("https://youtube.googleapis.com/youtube/v3/search?part=snippet&channelId=$($ChannelId)&order=date&type=video&eventType=live&key=$($ytApiKey)")
   try { $result = Invoke-RestMethod -Method Get -Uri $uri }
   catch { return $null }
 

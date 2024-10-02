@@ -1,6 +1,6 @@
 @{
   RootModule = '.\WatchTV.psm1'
-  ModuleVersion = '0.71.0'
+  ModuleVersion = '0.82.0'
   GUID = 'dbaa107f-646d-4ffd-9f6f-54b79131cf7a'
   Author = ''
   CompanyName = ''
@@ -35,7 +35,9 @@
     , "Get-KOVRStreamUrl"
     , "Get-KPIXStreamUrl"
     , "Get-KPNXStreamUrl"
+    , "Get-KPRCStreamUrl"
     , "Get-KPTVStreamUrl"
+    , "Get-KSATStreamUrl"
     , "Get-KSAZStreamUrl"
     , "Get-KSBWStreamUrl"
     , "Get-KSHBStreamUrl"
@@ -75,7 +77,10 @@
     , "Get-WFSBStreamUrl"
     , "Get-WFTXStreamUrl"
     , "Get-WHASStreamUrl"
+    , "Get-WHIOStreamUrl"
     , "Get-WJARStreamUrl"
+    , "Get-WJLAStreamUrl"
+    , "Get-WJXTStreamUrl"
     , "Get-WJYZStreamUrl"
     , "Get-WJZStreamUrl"
     , "Get-WKBWStreamUrl"
@@ -103,6 +108,8 @@
     , "Get-WYFFStreamUrl"
     , "Get-WZTVStreamUrl"
     , "Get-XEWTStreamUrl"
+    , "Get-XHABStreamUrl"
+    , "Get-XHGStreamUrl"
 
     , "Get-CTVTorontoDVR"
     , "Get-TegnaDVR"
@@ -114,7 +121,9 @@
     , "Get-KIIIDVR"
     , "Get-KINGDVR"
     , "Get-KPNXDVR"
+    , "Get-KVOADVR"
     , "Get-KVUEDVR"
+    , "Get-KYTXDVR"
     , "Get-WFAADVR"
     , "Get-WFMYDVR"
     , "Get-WFTXDVR"
@@ -126,6 +135,8 @@
     , "Get-WTHRDVR"
     , "Get-WTSPDVR"
     , "Get-WTVFDVR"
+    , "Get-WUSADVR"
+    , "Get-WWLDVR"
     , "Get-WXIADVR"
     , "Get-WXMIDVR"
 
@@ -134,6 +145,7 @@
     , "Get-EyemarkStreamUrl"
     , "Get-FoxStreamUrl"
     , "Get-GenericStreamUrl"
+    , "Get-GMGStreamUrl"
     , "Get-GrayStreamUrl"
     , "Get-GrayStreamInfo"
     , "Get-HearstStreamUrl"
