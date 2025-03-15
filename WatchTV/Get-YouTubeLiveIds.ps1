@@ -47,6 +47,7 @@ function Get-YouTubeLiveIds
 
   if ($PassThru)
   {
+    if ($PSCmdlet.ParameterSetName -eq "Handle") { $result | Add-Member -MemberType NoteProperty -Name "channelId" -Value $ChannelId }
     return $result
   }
 
