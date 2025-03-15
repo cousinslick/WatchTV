@@ -1,3 +1,20 @@
+# Zeam works a bit differently than the rest of this module.
+# Call Get-ZeamDVRInfo to get a list of available VODs for a station then find the one(s) you want, and call
+# Get-ZeamStreamUrl to get the URL to the stream. The stream URL is only good for 90 seconds, so you need to 
+# be ready to download.
+#
+# For example: https://zeam.com/publishers/123/zyxw-2#channel:95135
+# $vods = Get-ZeamDVRInfo -PublisherId 123 -TimeZone "Central"
+# $noonTodayVod = $vods | ? { $_.name -like "*Noon" -and $_.published -ge (Get-Date -Hour 0 -Minute 0 -Second 0) }
+#     mediaId    : 12348765
+#     channelId  : 95135
+#     name       : News at Noon
+#     dateString : 2025-01-04 1200
+#     published  : 1/4/2025 12:00:00 PM -06:00
+#     desktopUrl : https://zeam.com/publishers/123/#vod:12348765
+# $streamUrl = Get-ZeamStreamUrl -ChannelId $noonTodayVod.channelId -MediaId $noonTodayVod.mediaId
+#     https://vod-playlistserver.aws.syncbak.com/vod/f1234567890b123b8a95e0df1cdcaa69/master.m3u8?access_token=eyJhbGciOi...
+
 function Get-ZeamDVRInfo
 {
   param (
