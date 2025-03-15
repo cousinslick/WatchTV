@@ -33,7 +33,9 @@ function Get-GrayStreamInfo
     [Parameter(ParameterSetName = "StreamId", Mandatory = $true)]
     [string] $StreamId,
 
-    [int] $Count = 12
+    [int] $Count = 12,
+
+    [string] $TimeZone = "Eastern"
   )
 
   function GetTokenInfo
@@ -61,7 +63,7 @@ function Get-GrayStreamInfo
       Origin = "https://$($Domain.ToLowerInvariant())"
       Referer = "https://$($Domain.ToLowerInvariant())/"
       'api-token' = $TokenInfo.apiToken
-      'query-signature-token' = $TokenInfo.querySignatureToken
+      'api-device-data' = $TokenInfo.apiDeviceData
     }
 
     $irmArgs = @{
@@ -76,27 +78,99 @@ function Get-GrayStreamInfo
     Invoke-RestMethod @irmArgs
   }
 
-  $deviceId = Get-Nonce -MaxLength 50 -UrlSafe
+  $reactJsUrl = 'https://www.wbrc.com/pf/dist/engine/react.js'
+  $page = Invoke-WebRequest -Uri $reactJsUrl -UserAgent (Get-UA)
 
-  $getVideoGql = [ordered]@{
-    deviceId = $deviceId;
-    queryString = '{"query":" query GrayWebAppsDefaultData($expirationSeconds: Int, $vodCount: Int){ liveChannels { id title description callsign listImages { type url size } posterImages { type url size } isNew type status onNow { id title description episodeTitle tvRating startTime endTime duration isLooped isOffAir airDate } onNext { id title description episodeTitle tvRating startTime endTime duration isLooped isOffAir airDate } isNielsenEnabled isClosedCaptionEnabled location networkAffiliation taxonomy { facet terms } } firstLiveChannel: liveChannels(first: 1) { id title description callsign listImages { type url size } posterImages { type url size } isNew type status onNow { id title description episodeTitle tvRating startTime endTime duration isLooped isOffAir airDate } onNext { id title description episodeTitle tvRating startTime endTime duration isLooped isOffAir airDate } isNielsenEnabled isClosedCaptionEnabled location networkAffiliation taxonomy { facet terms } streamUrl(expiresIn: $expirationSeconds) } videoOnDemand(first: $vodCount){ id title description duration airDate listImages { type url size } posterImages { type url size } } } ","variables":{"expirationSeconds":300,"vodCount":PLACEHOLDER-VODCOUNT}}' -replace 'PLACEHOLDER-VODCOUNT', $Count
-  } | ConvertTo-Json -Compress
-  $getVideoToken = GetTokenInfo -DeviceId $deviceId -Query $getVideoGql
-  $videoStreams = DoGraphQuery -TokenInfo $getVideoToken
+  $tokensPattern = '[\{,](\w+?TOKEN):"(eyJhbGci.+?)"'
+  $tokensMatches = $page.Content | Select-String -Pattern $tokensPattern -AllMatches
+  $tokens = [System.Collections.Generic.List[object]]::new()
+  foreach($token in $tokensMatches.Matches)
+  {
+    $tokens.Add(@{
+      $token.Groups[1].Value.Trim() = $token.Groups[2].Value.Trim()
+    })
+  }
+
+  $apiToken = $tokens | Where-Object -FilterScript { $_.Keys -like "$($CallSign)_ZEAM*"} | Select-Object -First 1 -ExpandProperty Values
+  if ($null -eq $apiToken)
+  {
+    Write-Warning -Message "Could not find API token for $($CallSign)."
+    return
+  }
+
+  $jsonParsePattern = "JSON\.parse\('(\{.+?\})'\)"
+  $jsonParseMatches = $page.Content | Select-String -Pattern $jsonParsePattern -AllMatches
+  $stationInfos = [System.Collections.Generic.List[object]]::new()
+  foreach($jsonBody in $jsonParseMatches.Matches)
+  {
+    if ($jsonBody.Groups[1].Value -notlike "*appName*") { continue }
+    # admiralScriptTagContents in the JSON body is double-quoted JavaScript, so we need to replace \" with ' to make parsable JSON
+    $stationInfos.Add(($jsonBody.Groups[1].Value -replace '\\"', "'" | ConvertFrom-Json))
+  }
+
+  $stationInfo = $stationInfos | Where-Object -Property siteName -eq $CallSign
+  if ($null -eq $stationInfo)
+  {
+    Write-Warning -Message "Could not find station info for $($CallSign)."
+    return
+  }
+
+  $deviceId = Get-Nonce -MaxLength 50 -UrlSafe
+  $apiDeviceData = [ordered]@{
+    appName = $stationInfo.syncbak.appName
+    appPlatform = "web"
+    bundleId = "dev"
+    deviceId = $deviceId
+    deviceType = 8
+  }
+  $encodedApiDeviceData = [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes(($apiDeviceData | ConvertTo-Json -Compress)))
+
+  $getVideoQuery = '{"query":" query GrayWebAppsDefaultData($expirationSeconds: Int, $vodCount: Int){ liveChannels { id title description callsign listImages { type url size } posterImages { type url size } isNew type status onNow { id title description episodeTitle tvRating startTime endTime duration isLooped isOffAir airDate } onNext { id title description episodeTitle tvRating startTime endTime duration isLooped isOffAir airDate } isNielsenEnabled isClosedCaptionEnabled location networkAffiliation taxonomy { facet terms } } firstLiveChannel: liveChannels(first: 1) { id title description callsign listImages { type url size } posterImages { type url size } isNew type status onNow { id title description episodeTitle tvRating startTime endTime duration isLooped isOffAir airDate } onNext { id title description episodeTitle tvRating startTime endTime duration isLooped isOffAir airDate } isNielsenEnabled isClosedCaptionEnabled location networkAffiliation taxonomy { facet terms } streamUrl(expiresIn: $expirationSeconds) } videoOnDemand(first: $vodCount){ id title description duration airDate listImages { type url size } posterImages { type url size } } } ","variables":{"expirationSeconds":300,"vodCount":PLACEHOLDER-VODCOUNT}}' -replace 'PLACEHOLDER-VODCOUNT', $Count
+
+  $tokenInfo = [pscustomobject]@{
+    apiToken = $apiToken;
+    apiDeviceData = $encodedApiDeviceData
+    query = $getVideoQuery
+  }
+  $videoStreams = DoGraphQuery -TokenInfo $tokenInfo
 
   if ($LiveStream)
   {
     return $videoStreams.data.firstLiveChannel.streamUrl
   }
 
+  $atTimeZone = switch ($TimeZone)
+  {
+    "Eastern" { "Eastern Standard Time" }
+    "Central" { "Central Standard Time" }
+    "Mountain" { "Mountain Standard Time" }
+    "Arizona" { "US Mountain Standard Time" }
+    "Pacific" { "Pacific Standard Time" }
+    "Alaska" { "Alaskan Standard Time" }
+    "Hawaii" { "Hawaiian Standard Time" }
+    Default
+    {
+      $parsedTz = $null
+      if ([System.TimeZoneInfo]::TryFindSystemTimeZoneById($TimeZone, [ref]$parsedTz))
+      {
+        $parsedTz.Id
+      }
+      else
+      {
+        Write-Warning "Unknown time zone '$($TimeZone)'. Defaulting to Eastern Standard Time."
+        $atTimeZone = "Eastern Standard Time"
+      }
+    }
+  }
+
   $availableStreams = foreach ($stream in $videoStreams.data.videoOnDemand)
   {
+    $publishedStationLocalTime = [System.TimeZoneInfo]::ConvertTimeBySystemTimeZoneId($stream.airDate, $atTimeZone)
     [pscustomobject]@{
       Title = $stream.title
       Id = $stream.id
-      Published = $stream.airDate
-      DateString = $stream.airDate.ToString('yyyy-MM-dd HHmm')
+      Published = $publishedStationLocalTime
+      DateString = $publishedStationLocalTime.ToString('yyyy-MM-dd HHmm')
     }
   }
 
@@ -133,12 +207,14 @@ function Get-GrayStreamInfo
     }
   }
 
-  $getVodGql = [ordered]@{
-    deviceId = $deviceId
-    queryString = '{"query":"query GrayWebAppsVodItemData($vodId: ID!, $vodCount: Int){ videoOnDemandItem (id: $vodId){ id title description duration airDate listImages { type url size } posterImages { type url size } streamUrl } liveChannels { id title description callsign listImages { type url size } posterImages { type url size } isNew type status onNow { id title description episodeTitle tvRating startTime endTime duration isLooped isOffAir airDate} onNext { id title description episodeTitle tvRating startTime endTime duration isLooped isOffAir airDate} isNielsenEnabled isClosedCaptionEnabled location networkAffiliation taxonomy { facet terms } } videoOnDemand (first: $vodCount){ id title description duration airDate listImages { type url size } posterImages { type url size } } }","variables":{"vodCount":PLACEHOLDER-VODCOUNT,"vodId":"PLACEHOLDER-VODID"}}' -replace 'PLACEHOLDER-VODID', $theStream.Id -replace 'PLACEHOLDER-VODCOUNT', $Count
-  } | ConvertTo-Json -Compress
-  $getVodToken = GetTokenInfo -DeviceId $deviceId -Query $getVodGql
-  $vodStream = DoGraphQuery -TokenInfo $getVodToken
+  $getVODQuery = '{"query":"query GrayWebAppsVodItemData($vodId: ID!, $vodCount: Int){ videoOnDemandItem (id: $vodId){ id title description duration airDate listImages { type url size } posterImages { type url size } streamUrl } liveChannels { id title description callsign listImages { type url size } posterImages { type url size } isNew type status onNow { id title description episodeTitle tvRating startTime endTime duration isLooped isOffAir airDate} onNext { id title description episodeTitle tvRating startTime endTime duration isLooped isOffAir airDate} isNielsenEnabled isClosedCaptionEnabled location networkAffiliation taxonomy { facet terms } } videoOnDemand (first: $vodCount){ id title description duration airDate listImages { type url size } posterImages { type url size } } }","variables":{"vodCount":PLACEHOLDER-VODCOUNT,"vodId":"PLACEHOLDER-VODID"}}' -replace 'PLACEHOLDER-VODID', $theStream.Id -replace 'PLACEHOLDER-VODCOUNT', $Count
+
+  $vodTokenInfo = [pscustomobject]@{
+    apiToken = $apiToken;
+    apiDeviceData = $encodedApiDeviceData
+    query = $getVODQuery
+  }
+  $vodStream = DoGraphQuery -TokenInfo $vodTokenInfo
 
   return [pscustomobject]@{
     Title = $theStream.Title

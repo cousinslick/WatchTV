@@ -1,6 +1,6 @@
 @{
   RootModule = '.\WatchTV.psm1'
-  ModuleVersion = '0.82.0'
+  ModuleVersion = '0.90.0'
   GUID = 'dbaa107f-646d-4ffd-9f6f-54b79131cf7a'
   Author = ''
   CompanyName = ''
@@ -37,6 +37,7 @@
     , "Get-KPNXStreamUrl"
     , "Get-KPRCStreamUrl"
     , "Get-KPTVStreamUrl"
+    , "Get-KRGVStreamUrl"
     , "Get-KSATStreamUrl"
     , "Get-KSAZStreamUrl"
     , "Get-KSBWStreamUrl"
@@ -45,6 +46,7 @@
     , "Get-KSWBStreamUrl"
     , "Get-KTABStreamUrl"
     , "Get-KTAZStreamUrl"
+    , "Get-KTTVStreamUrl"
     , "Get-KTSMStreamUrl"
     , "Get-KTVHStreamUrl"
     , "Get-KTVTStreamUrl"
@@ -61,6 +63,7 @@
     , "Get-WBBMStreamUrl"
     , "Get-WBFFStreamUrl"
     , "Get-WBIRStreamUrl"
+    , "Get-WBRCStreamUrl"
     , "Get-WBTSStreamUrl"
     , "Get-WBZStreamUrl"
     , "Get-WCAUStreamUrl"
@@ -69,6 +72,7 @@
     , "Get-WCCBStreamUrl"
     , "Get-WCCOStreamUrl"
     , "Get-WCVBStreamUrl"
+    , "Get-WDCWStreamUrl"
     , "Get-WESHStreamUrl"
     , "Get-WFLA38StreamUrl"
     , "Get-WFLAStreamUrl"
@@ -94,6 +98,7 @@
     , "Get-WPMTStreamUrl"
     , "Get-WPRIStreamUrl"
     , "Get-WPTVStreamUrl"
+    , "Get-WSVNStreamUrl"
     , "Get-WRCStreamUrl"
     , "Get-WTAEStreamUrl"
     , "Get-WTHRStreamUrl"
@@ -105,8 +110,10 @@
     , "Get-WVITStreamUrl"
     , "Get-WWJStreamUrl"
     , "Get-WXMIStreamUrl"
+    , "Get-WXYZStreamUrl"
     , "Get-WYFFStreamUrl"
     , "Get-WZTVStreamUrl"
+    , "Get-WZVNStreamUrl"
     , "Get-XEWTStreamUrl"
     , "Get-XHABStreamUrl"
     , "Get-XHGStreamUrl"
@@ -139,6 +146,9 @@
     , "Get-WWLDVR"
     , "Get-WXIADVR"
     , "Get-WXMIDVR"
+    , "Get-WZZMDVR"
+
+    , "Get-CNBCStreamUrl"
 
     , "Get-UA"
     , "Get-CabletownStreamUrl"
@@ -153,6 +163,8 @@
     , "Get-SinclairStreamUrl"
     , "Get-YouTubeLiveIds"
     , "Get-NewsONStations"
+    , "Get-ZeamDVRInfo"
+    , "Get-ZeamStreamUrl"
   )
   CmdletsToExport = @()
   VariablesToExport = '*'
