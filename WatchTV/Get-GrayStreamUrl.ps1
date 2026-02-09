@@ -35,7 +35,7 @@ function Get-GrayStreamInfo
 
     [int] $Count = 12,
 
-    [string] $TimeZone = "Eastern"
+    [string] $TimeZone = "Local"
   )
 
   function GetTokenInfo
@@ -84,14 +84,14 @@ function Get-GrayStreamInfo
   $tokensPattern = '[\{,](\w+?TOKEN):"(eyJhbGci.+?)"'
   $tokensMatches = $page.Content | Select-String -Pattern $tokensPattern -AllMatches
   $tokens = [System.Collections.Generic.List[object]]::new()
-  foreach($token in $tokensMatches.Matches)
+  foreach ($token in $tokensMatches.Matches)
   {
     $tokens.Add(@{
-      $token.Groups[1].Value.Trim() = $token.Groups[2].Value.Trim()
-    })
+        $token.Groups[1].Value.Trim() = $token.Groups[2].Value.Trim()
+      })
   }
 
-  $apiToken = $tokens | Where-Object -FilterScript { $_.Keys -like "$($CallSign)_ZEAM*"} | Select-Object -First 1 -ExpandProperty Values
+  $apiToken = $tokens | Where-Object -FilterScript { $_.Keys -like "$($CallSign)_ZEAM*" } | Select-Object -First 1 -ExpandProperty Values
   if ($null -eq $apiToken)
   {
     Write-Warning -Message "Could not find API token for $($CallSign)."
@@ -101,7 +101,7 @@ function Get-GrayStreamInfo
   $jsonParsePattern = "JSON\.parse\('(\{.+?\})'\)"
   $jsonParseMatches = $page.Content | Select-String -Pattern $jsonParsePattern -AllMatches
   $stationInfos = [System.Collections.Generic.List[object]]::new()
-  foreach($jsonBody in $jsonParseMatches.Matches)
+  foreach ($jsonBody in $jsonParseMatches.Matches)
   {
     if ($jsonBody.Groups[1].Value -notlike "*appName*") { continue }
     # admiralScriptTagContents in the JSON body is double-quoted JavaScript, so we need to replace \" with ' to make parsable JSON
@@ -112,7 +112,6 @@ function Get-GrayStreamInfo
   if ($null -eq $stationInfo)
   {
     Write-Warning -Message "Could not find station info for $($CallSign)."
-    return
   }
 
   $deviceId = Get-Nonce -MaxLength 50 -UrlSafe
@@ -123,6 +122,7 @@ function Get-GrayStreamInfo
     deviceId = $deviceId
     deviceType = 8
   }
+  if ($null -eq $apiDeviceData.appName) { $apiDeviceData.Remove("appName") }
   $encodedApiDeviceData = [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes(($apiDeviceData | ConvertTo-Json -Compress)))
 
   $getVideoQuery = '{"query":" query GrayWebAppsDefaultData($expirationSeconds: Int, $vodCount: Int){ liveChannels { id title description callsign listImages { type url size } posterImages { type url size } isNew type status onNow { id title description episodeTitle tvRating startTime endTime duration isLooped isOffAir airDate } onNext { id title description episodeTitle tvRating startTime endTime duration isLooped isOffAir airDate } isNielsenEnabled isClosedCaptionEnabled location networkAffiliation taxonomy { facet terms } } firstLiveChannel: liveChannels(first: 1) { id title description callsign listImages { type url size } posterImages { type url size } isNew type status onNow { id title description episodeTitle tvRating startTime endTime duration isLooped isOffAir airDate } onNext { id title description episodeTitle tvRating startTime endTime duration isLooped isOffAir airDate } isNielsenEnabled isClosedCaptionEnabled location networkAffiliation taxonomy { facet terms } streamUrl(expiresIn: $expirationSeconds) } videoOnDemand(first: $vodCount){ id title description duration airDate listImages { type url size } posterImages { type url size } } } ","variables":{"expirationSeconds":300,"vodCount":PLACEHOLDER-VODCOUNT}}' -replace 'PLACEHOLDER-VODCOUNT', $Count
@@ -148,6 +148,7 @@ function Get-GrayStreamInfo
     "Pacific" { "Pacific Standard Time" }
     "Alaska" { "Alaskan Standard Time" }
     "Hawaii" { "Hawaiian Standard Time" }
+    "Local" { [System.TimeZoneInfo]::Local.Id }
     Default
     {
       $parsedTz = $null
@@ -157,8 +158,8 @@ function Get-GrayStreamInfo
       }
       else
       {
-        Write-Warning "Unknown time zone '$($TimeZone)'. Defaulting to Eastern Standard Time."
-        $atTimeZone = "Eastern Standard Time"
+        Write-Warning "Unknown time zone '$($TimeZone)'. Defaulting to local time zone."
+        [System.TimeZoneInfo]::Local.Id
       }
     }
   }
