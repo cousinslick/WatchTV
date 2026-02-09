@@ -19,7 +19,7 @@ function Get-ZeamDVRInfo
 {
   param (
     [Parameter(Mandatory = $true)][int] $PublisherId,
-    [string] $TimeZone = "Eastern"
+    [string] $TimeZone = "Local"
   )
 
   $ErrorActionPreference = 'Stop'
@@ -34,6 +34,7 @@ function Get-ZeamDVRInfo
     "Pacific" { "Pacific Standard Time" }
     "Alaska" { "Alaskan Standard Time" }
     "Hawaii" { "Hawaiian Standard Time" }
+    "Local" { [System.TimeZoneInfo]::Local.Id }
     Default
     {
       $parsedTz = $null
@@ -43,8 +44,8 @@ function Get-ZeamDVRInfo
       }
       else
       {
-        Write-Warning "Unknown time zone '$($TimeZone)'. Defaulting to Eastern Standard Time."
-        $atTimeZone = "Eastern Standard Time"
+        Write-Warning "Unknown time zone '$($TimeZone)'. Defaulting to local time zone."
+        [System.TimeZoneInfo]::Local.Id
       }
     }
   }

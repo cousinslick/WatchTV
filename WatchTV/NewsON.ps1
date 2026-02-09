@@ -21,6 +21,22 @@ function Get-NewsONDVR
 
     $dateTime.LocalDateTime
   }
+  function New-DVRItem
+  {
+    param (
+      $InputObject
+    )
+
+    $startTime = $null = ConvertFromUnixTimestamp -TimeStamp $InputObject.startTime -AtTimeZone $atTz
+
+    [pscustomobject]@{
+      Title = $InputObject.name
+      Published = $startTime
+      DateString = $startTime.ToString('yyyy-MM-dd HHmm')
+      StreamUrl = $InputObject.streamUrl
+      DesktopUrl = "https://www.newson.us/stationDetails/$($StationId)?id=$($InputObject.id)&videoType=program"
+    }
+  }
 
   $atTz = ($null -like $TimeZone) ? 'Eastern Standard Time' : $TimeZone
   $iosAppUA = "NewsON/200407 CFNetwork/1498.700.2 Darwin/23.6.0"
@@ -29,16 +45,10 @@ function Get-NewsONDVR
   $program = Invoke-RestMethod -Uri $url -UserAgent $iosAppUA
 
   $vodItems = [System.Collections.Generic.List[object]]::new()
+  $vodItems.Add((New-DVRItem -InputObject $program.latest))
   foreach ($vodItem in $program.programs)
   {
-    $startTime = $null = ConvertFromUnixTimestamp -TimeStamp $vodItem.startTime -AtTimeZone $atTz
-    $vodItems.Add([pscustomobject]@{
-        Title = $vodItem.name
-        Published = $startTime
-        DateString = $startTime.ToString('yyyy-MM-dd HHmm')
-        StreamUrl = $vodItem.streamUrl
-        DesktopUrl = "https://www.newson.us/stationDetails/$($StationId)?id=$($vodItem.id)&videoType=program"
-      })
+    $vodItems.Add((New-DVRItem -InputObject $vodItem))
   }
 
   $vodItems
